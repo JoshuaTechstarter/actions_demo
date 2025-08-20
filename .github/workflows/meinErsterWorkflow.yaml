@@ -10,6 +10,7 @@ jobs:
         run: echo "Ich mache den Anfang"
   meinZweiterJob:
     runs-on: ubuntu-latest
+    needs: meinErsterJob
     steps:
       - name: Erster Schritt im zweiten Job
         run: echo "Ohne mich geht es nicht weiter"
@@ -18,4 +19,6 @@ jobs:
     needs: meinZweiterJob
     steps:
       - name: Erster Schritt im dritten Job
+        run: date
+      - name: Zweiter Schritt im dritten Job
         run: echo "Ich mache den Abschluss"
