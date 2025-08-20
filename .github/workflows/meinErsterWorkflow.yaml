@@ -7,12 +7,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Mein erster Schritt
-        run: echo "Hallo Welt"
+        run: echo "Ich mache den Anfang"
   meinZweiterJob:
     runs-on: ubuntu-latest
-    needs: meinErsterJob
     steps:
       - name: Erster Schritt im zweiten Job
-        run: echo "Hello World"
-      - name: Zweiter Schritt im zweiten Job
-        run: echo "Bye World"
+        run: echo "Ohne mich geht es nicht weiter"
+  meinDritterJob:
+    runs-on: ubuntu-latest
+    needs: meinZweiterJob
+    steps:
+      - name: Erster Schritt im dritten Job
+        run: echo "Ich mache den Abschluss"
