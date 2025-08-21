@@ -6,6 +6,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v5
+
       - name: sshSetup
         run: |
           mkdir -p ~/.ssh
