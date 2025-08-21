@@ -17,4 +17,4 @@ jobs:
           ssh-keyscan -H ${{secrets.EC2_IP}} >>~/.ssh/known_hosts
       - name: sshConnection
         run: |
-          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "mkdir testOrdnerAusGithubActions"
+          scp -i ~/.ssh/meinPrivateKey frontend/index.html ubuntu@${{secrets.EC2_IP}}:/var/www/html
