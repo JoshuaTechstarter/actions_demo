@@ -17,4 +17,5 @@ jobs:
           ssh-keyscan -H ${{secrets.EC2_IP}} >>~/.ssh/known_hosts
       - name: sshConnection
         run: |
-          scp -i ~/.ssh/meinPrivateKey frontend/index.html ubuntu@${{secrets.EC2_IP}}:/var/www/html
+          scp -i ~/.ssh/meinPrivateKey frontend/index.html ubuntu@${{secrets.EC2_IP}}:/home/ubuntu/index.html
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo cp /home/ubuntu/index.html /var/www/html/index.html"
