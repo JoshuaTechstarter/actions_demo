@@ -1,0 +1,17 @@
+name: Deploy
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sshSetup
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
+          chmod 400 ~/.ssh/meinPrivateKey
+          ssh-keyscan -H ${{secrets.EC2_IP}} >>~/.ssh/known_hosts
+      - name: sshConnection
+        run: |
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "mkdir testOrdnerAusGithubActions"
