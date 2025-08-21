@@ -19,3 +19,39 @@ jobs:
         run: |
           scp -i ~/.ssh/meinPrivateKey frontend/index.html ubuntu@${{secrets.EC2_IP}}:/home/ubuntu/index.html
           ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo cp /home/ubuntu/index.html /var/www/html/index.html"
+
+      - name: Ordner auf EC2 anlegen
+        run: |
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "mkdir -p ~/meinOrdner"
+      - name: Datei info.txt kopieren
+        run: |
+          scp -i ~/.ssh/meinPrivateKey meinOrdner/info.txt ubuntu@${{secrets.EC2_IP}}:~/meinOrdner/info.txt
+
+      - name: Check Datei auf EC2
+        run: |
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "ls -l ~/meinOrdner && head -n 1 ~/meinOrdner/info.txt"
+
+      - name: Cowsay installieren
+        run: |
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt update -y && sudo apt install -y cowsay"
+
+      - name: Cowsay ausführen
+        run: |
+          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} 'cowsay "Hallo aus den GitHub Actions"'
+      
+  docker-install:
+        runs-on: ubuntu-latest
+
+        steps:
+             - name: ssh setup
+               run: | 
+                mkdir -p ~/.ssh
+                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
+                chmod 400 ~/.ssh/meinPrivateKey
+                ssh-keyscan -H ${{secrets.EC2_IP}}  >> ~/.ssh/known_hosts 
+
+             - name: install docker
+               run: |
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt update"
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt install docker.io -y"
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo usermod -aG docker ubuntu"
