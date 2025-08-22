@@ -1,48 +1,58 @@
-name: Deploy
+name: DeployWorkflow
 
 on: push
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v5
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v5
 
-      - name: sshSetup
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
-          chmod 400 ~/.ssh/meinPrivateKey
-          ssh-keyscan -H ${{secrets.EC2_IP}} >>~/.ssh/known_hosts
-      - name: sshConnection
-        run: |
-          scp -i ~/.ssh/meinPrivateKey frontend/index.html ubuntu@${{secrets.EC2_IP}}:/home/ubuntu/index.html
-          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo cp /home/ubuntu/index.html /var/www/html/index.html"
+            - name: ssh setup
+              run: | 
+                mkdir -p ~/.ssh
+                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
+                chmod 400 ~/.ssh/meinPrivateKey
+                ssh-keyscan -H ${{secrets.EC2_IP}}  >> ~/.ssh/known_hosts    
+            
+            - name: install nginx
+              run: |
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt update"
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt install nginx -y"
+                
+            - name: SSH Connection
+              run: |
+                scp -i ~/.ssh/meinPrivateKey frontend/index.html ubuntu@${{secrets.EC2_IP}}:/home/ubuntu/index.html
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo cp /home/ubuntu/index.html /var/www/html/index.html"
 
-      - name: Ordner auf EC2 anlegen
-        run: |
-          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "mkdir -p ~/meinOrdner"
-      - name: Datei info.txt kopieren
-        run: |
-          scp -i ~/.ssh/meinPrivateKey meinOrdner/info.txt ubuntu@${{secrets.EC2_IP}}:~/meinOrdner/info.txt
+    build: 
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v5       
+            
+            - name: ssh setup
+              run: | 
+                mkdir -p ~/.ssh
+                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
+                chmod 400 ~/.ssh/meinPrivateKey
+                ssh-keyscan -H ${{secrets.EC2_IP}}  >> ~/.ssh/known_hosts 
 
-      - name: Check Datei auf EC2
-        run: |
-          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "ls -l ~/meinOrdner && head -n 1 ~/meinOrdner/info.txt"
+            - name: copy frontend ordner zu ec2
+              run: |
+                scp -i ~/.ssh/meinPrivateKey -r frontend ubuntu@${{secrets.EC2_IP}}:/home/ubuntu
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "docker build -t frontend-image ./frontend/"
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "docker run -d --name mein-frontend-container -p 8081:80 frontend-image"
 
-      - name: Cowsay installieren
-        run: |
-          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt update -y && sudo apt install -y cowsay"
-
-      - name: Cowsay ausführen
-        run: |
-          ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} 'cowsay "Hallo aus den GitHub Actions"'
-      
-  docker-install:
+    docker-test-job:
+        needs: deploy
         runs-on: ubuntu-latest
 
         steps:
+             - name: checkout
+               uses: actions/checkout@v5
+               
              - name: ssh setup
                run: | 
                 mkdir -p ~/.ssh
@@ -55,3 +65,12 @@ jobs:
                 ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt update"
                 ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo apt install docker.io -y"
                 ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "sudo usermod -aG docker ubuntu"
+             
+             - name: start nginx container on ec2 instance
+               run: |
+                  ssh -i ~/.ssh/meinPrivateKey ubuntu@${{secrets.EC2_IP}} "
+                    docker stop my-nginx-container || true 
+                    docker rm my-nginx-container || true 
+                    docker run -d --name my-nginx-container -p 8080:80 nginx 
+                    "
+                
