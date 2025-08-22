@@ -3,63 +3,129 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Risiken von Vibecoding</title>
+    <title>Risiken von Vibecoding & KI-Nutzung</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 2em;
-            background: #f9f9f9;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            background: #f4f7fa;
             color: #222;
         }
 
-        h1 {
-            color: #2c3e50;
+        header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 2em 0 1em 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+        }
+
+        main {
+            max-width: 700px;
+            margin: 2em auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 16px rgba(44, 62, 80, 0.08);
+            padding: 2em;
+        }
+
+        h1,
+        h2 {
+            margin-top: 0;
+        }
+
+        h2 {
+            color: #2980b9;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.3em;
         }
 
         section {
-            margin-bottom: 1.5em;
+            margin-bottom: 2em;
         }
 
         ul {
             margin-left: 1.5em;
+            padding-left: 0.5em;
         }
 
         .warn {
             color: #c0392b;
             font-weight: bold;
         }
+
+        .ai-risk {
+            background: #fbeee6;
+            border-left: 4px solid #e67e22;
+            padding: 1em;
+            margin-bottom: 1em;
+            border-radius: 4px;
+        }
+
+        footer {
+            text-align: center;
+            color: #888;
+            margin: 2em 0 1em 0;
+            font-size: 0.95em;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Risiken von Vibecoding</h1>
-    <section>
-        <p>
-            Vibecoding ist ein Trend in der Softwareentwicklung, bei dem Entscheidungen hauptsächlich nach Gefühl und
-            Intuition getroffen werden, anstatt auf bewährte Methoden und fundiertes Wissen zu setzen.
-        </p>
-    </section>
-    <section>
-        <h2>Mögliche Risiken</h2>
-        <ul>
-            <li><span class="warn">Fehleranfälligkeit:</span> Ohne klare Struktur steigt die Wahrscheinlichkeit für Bugs
-                und Sicherheitslücken.</li>
-            <li><span class="warn">Schlechte Wartbarkeit:</span> Der Code kann schwer verständlich und schwer zu pflegen
-                sein.</li>
-            <li><span class="warn">Teamprobleme:</span> Andere Entwickler können Schwierigkeiten haben, den Code
-                nachzuvollziehen.</li>
-            <li><span class="warn">Verlust von Best Practices:</span> Erprobte Methoden und Standards werden ignoriert.
-            </li>
-        </ul>
-    </section>
-    <section>
-        <h2>Fazit</h2>
-        <p>
-            Obwohl Kreativität wichtig ist, sollte Vibecoding mit Vorsicht eingesetzt werden. Eine Balance zwischen
-            Intuition und bewährten Prinzipien ist entscheidend für erfolgreiche Softwareprojekte.
-        </p>
-    </section>
+    <header>
+        <h1>Risiken von Vibecoding & KI-Nutzung</h1>
+        <p>Intuition und künstliche Intelligenz – Chancen und Gefahren im Entwicklungsprozess</p>
+    </header>
+    <main>
+        <section>
+            <h2>Was ist Vibecoding?</h2>
+            <p>
+                Vibecoding beschreibt einen Ansatz in der Softwareentwicklung, bei dem Entscheidungen vor allem nach
+                Gefühl und Intuition getroffen werden – oft unter Einbeziehung von KI-Tools wie Copilot oder ChatGPT,
+                ohne bewährte Methoden und fundiertes Wissen konsequent zu nutzen.
+            </p>
+        </section>
+        <section>
+            <h2>Allgemeine Risiken</h2>
+            <ul>
+                <li><span class="warn">Fehleranfälligkeit:</span> Ohne klare Struktur steigt die Wahrscheinlichkeit für
+                    Bugs und Sicherheitslücken.</li>
+                <li><span class="warn">Schlechte Wartbarkeit:</span> Der Code kann schwer verständlich und schwer zu
+                    pflegen sein.</li>
+                <li><span class="warn">Teamprobleme:</span> Andere Entwickler können Schwierigkeiten haben, den Code
+                    nachzuvollziehen.</li>
+                <li><span class="warn">Verlust von Best Practices:</span> Erprobte Methoden und Standards werden
+                    ignoriert.</li>
+            </ul>
+        </section>
+        <section>
+            <h2>Zusätzliche Risiken durch KI-Nutzung</h2>
+            <div class="ai-risk">
+                <ul>
+                    <li><span class="warn">Unbemerkte Fehler:</span> KI-generierter Code kann Fehler enthalten, die
+                        schwer zu erkennen sind, da sie plausibel wirken.</li>
+                    <li><span class="warn">Verlust von Verständnis:</span> Entwickler verlassen sich auf KI-Vorschläge,
+                        ohne den Code wirklich zu verstehen.</li>
+                    <li><span class="warn">Verstärkung schlechter Praktiken:</span> KI kann suboptimale oder unsichere
+                        Muster aus Trainingsdaten übernehmen und vorschlagen.</li>
+                    <li><span class="warn">Abhängigkeit:</span> Starke Nutzung von KI kann zu einer Abhängigkeit führen
+                        und die eigene Problemlösekompetenz schwächen.</li>
+                    <li><span class="warn">Datenschutz & Sicherheit:</span> KI-Tools können sensible Informationen
+                        aufnehmen oder vorschlagen, die nicht für die Öffentlichkeit bestimmt sind.</li>
+                </ul>
+            </div>
+        </section>
+        <section>
+            <h2>Fazit</h2>
+            <p>
+                KI kann die Entwicklung beschleunigen und inspirieren, sollte aber nie das eigene Verständnis und die
+                Anwendung bewährter Prinzipien ersetzen. Eine kritische Prüfung und das Bewahren von Best Practices sind
+                entscheidend, um Risiken zu minimieren.
+            </p>
+        </section>
+    </main>
+    <footer>
+        &copy; 2025 Risiken von Vibecoding & KI-Nutzung
+    </footer>
 </body>
-
-</html>
