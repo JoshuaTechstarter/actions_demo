@@ -46,7 +46,7 @@ jobs:
                 webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
                 webhook-type: incoming-webhook
                 payload: |
-                    text: "✅ Test Job erfolgreich durchgelaufen - Jetzt wird deployt"
+                    text: ":gigachad: Test Job erfolgreich durchgelaufen - Jetzt wird deployt"
 
             - name: Slack Nachricht bei Nicht Erfolg
               if: ${{failure()}}
@@ -55,7 +55,7 @@ jobs:
                 webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
                 webhook-type: incoming-webhook
                 payload: |
-                    text: "❌ Test Job fehlgeschalgen - Bitte sofort überprüfen"
+                    text: ":5head: Test Job fehlgeschalgen - Bitte sofort überprüfen"
 
     deploy:
         needs: test
