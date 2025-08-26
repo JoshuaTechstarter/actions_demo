@@ -1,0 +1,76 @@
+name: Test und deployment vom Taschenrechner
+
+on : push
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+
+            - name: Post a message in a channel
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                    text: "🚀 Pipeline wurde soeben gestartet. Pipeline: ${{github.workflow}}"
+               
+            - name: checkout
+              uses: actions/checkout@v5
+            
+            - name: Setup Nodejs
+              uses: actions/setup-node@v4
+              with: 
+                node-version: "20"
+
+            - name: install dependencies
+              run: |
+                cd testing-example 
+                npm install
+
+            - name: test
+              run: |
+                cd testing-example 
+                npm test
+            
+            - name: coverage upload
+              uses: actions/upload-artifact@v4
+              with:
+                name: coverage-report
+                path: testing/coverage
+
+            - name: Slack Nachricht bei Erfolg
+              if: ${{success()}}
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                    text: "✅ Test Job erfolgreich durchgelaufen - Jetzt wird deployt"
+
+            - name: Slack Nachricht bei Nicht Erfolg
+              if: ${{failure()}}
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                    text: "❌ Test Job fehlgeschalgen - Bitte sofort überprüfen"
+
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v5
+
+            - name: ssh setup
+              run: | 
+                mkdir -p ~/.ssh
+                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
+                chmod 400 ~/.ssh/meinPrivateKey
+                ssh-keyscan -H ${{secrets.EC2_IP}}  >> ~/.ssh/known_hosts    
+            
+            - name: kopiere math.js zu ec2 maschine
+              run: |
+                scp -i ~/.ssh/meinPrivateKey testing/math.js ubuntu@${{secrets.EC2_IP}}:/home/ubuntu
