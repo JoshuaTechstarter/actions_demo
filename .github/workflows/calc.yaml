@@ -25,12 +25,12 @@ jobs:
 
             - name: install dependencies
               run: |
-                cd testing-example 
+                cd testing
                 npm install
 
             - name: test
               run: |
-                cd testing-example 
+                cd testing
                 npm test
             
             - name: coverage upload
