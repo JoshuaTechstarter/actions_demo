@@ -76,6 +76,6 @@ jobs:
               run: |
                 for ip in ${{ secrets.EC2_IPS }}; do
                 echo "Deploying index.html to $ip..."
-                scp -i ~/.ssh/meinPrivateKey.pem frontend/index.html ubuntu@$ip:/home/ubuntu/index.html
-                ssh -i ~/.ssh/meinPrivateKey.pem ubuntu@$ip "sudo mv /home/ubuntu/index.html /var/www/html/index.html"
+                scp -i ~/.ssh/meinPrivateKey frontend/index.html ubuntu@$ip:/home/ubuntu/index.html
+                ssh -i ~/.ssh/meinPrivateKey ubuntu@$ip "sudo mv /home/ubuntu/index.html /var/www/html/index.html"
                 done
