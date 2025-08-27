@@ -1,0 +1,85 @@
+name: ALB
+
+on : push
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+
+            - name: Post a message in a channel
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                    text: ":5head: Pipeline wurde soeben gestartet. Pipeline: ${{github.workflow}}"
+               
+            - name: checkout
+              uses: actions/checkout@v5
+            
+            - name: Setup Nodejs
+              uses: actions/setup-node@v4
+              with: 
+                node-version: "20"
+
+            - name: install dependencies
+              run: |
+                cd testing
+                npm install
+
+            - name: test
+              run: |
+                cd testing
+                npm test
+            
+            - name: coverage upload
+              uses: actions/upload-artifact@v4
+              with:
+                name: coverage-report
+                path: testing/coverage
+
+            - name: Slack Nachricht bei Erfolg
+              if: ${{success()}}
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                    text: ":gigachad: Test Job erfolgreich durchgelaufen - Jetzt wird deployt"
+
+            - name: Slack Nachricht bei Nicht Erfolg
+              if: ${{failure()}}
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+                webhook-type: incoming-webhook
+                payload: |
+                    text: ":lolske2: Test Job fehlgeschalgen - Bitte sofort überprüfen"
+
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v5
+
+            - name: Setup SSH
+              run: |
+                mkdir -p ~/.ssh
+                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
+                chmod 400 ~/.ssh/meinPrivateKey
+                for ip in ${{ secrets.EC2_IP }}; do
+                ssh-keyscan -H $ip >> ~/.ssh/known_hosts
+                done
+            - name: Copy index.html to all EC2 instances
+              run: |
+                for ip in ${{ secrets.EC2_IP }}; do
+                echo "Deploying index.html to $ip..."
+                scp -i ~/.ssh/meinPrivateKey.pem frontend/index.html ubuntu@$ip:/home/ubuntu/index.html
+                ssh -i ~/.ssh/meinPrivateKey.pem ubuntu@$ip "sudo mv /home/ubuntu/index.html /var/www/html/index.html"
+                done
+
+            - name: kopiere index.html zu ec2 maschine
+              run: |
+                scp -i ~/.ssh/meinPrivateKey.pem frontend/index.html ubuntu@${{secrets.EC2_IPS}}:/home/ubuntu

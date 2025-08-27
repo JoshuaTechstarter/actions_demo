@@ -13,7 +13,7 @@ jobs:
                 webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
                 webhook-type: incoming-webhook
                 payload: |
-                    text: ":lolske: Pipeline wurde soeben gestartet. Pipeline: ${{github.workflow}}"
+                    text: ":5head: Pipeline wurde soeben gestartet. Pipeline: ${{github.workflow}}"
                
             - name: checkout
               uses: actions/checkout@v5
@@ -55,7 +55,7 @@ jobs:
                 webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
                 webhook-type: incoming-webhook
                 payload: |
-                    text: ":5head: Test Job fehlgeschalgen - Bitte sofort überprüfen"
+                    text: ":lolske2: Test Job fehlgeschalgen - Bitte sofort überprüfen"
 
     deploy:
         needs: test
