@@ -69,17 +69,13 @@ jobs:
                 mkdir -p ~/.ssh
                 echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/meinPrivateKey
                 chmod 400 ~/.ssh/meinPrivateKey
-                for ip in ${{ secrets.EC2_IP }}; do
+                for ip in ${{ secrets.EC2_IPS }}; do
                 ssh-keyscan -H $ip >> ~/.ssh/known_hosts
                 done
             - name: Copy index.html to all EC2 instances
               run: |
-                for ip in ${{ secrets.EC2_IP }}; do
+                for ip in ${{ secrets.EC2_IPS }}; do
                 echo "Deploying index.html to $ip..."
                 scp -i ~/.ssh/meinPrivateKey.pem frontend/index.html ubuntu@$ip:/home/ubuntu/index.html
                 ssh -i ~/.ssh/meinPrivateKey.pem ubuntu@$ip "sudo mv /home/ubuntu/index.html /var/www/html/index.html"
                 done
-
-            - name: kopiere index.html zu ec2 maschine
-              run: |
-                scp -i ~/.ssh/meinPrivateKey.pem frontend/index.html ubuntu@${{secrets.EC2_IPS}}:/home/ubuntu
